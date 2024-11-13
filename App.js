@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView,
+  Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -20,12 +21,15 @@ export default function App() {
     setSelectedDay(day.dateString);
   };
 
-  const textEdit = (content) => {
+  const TextEdit = (content) => {
     setText(content);
-  }
+  };
 
-  const addMemo = (event) => {
-    setModalVisible(true);
+  const CreateMemo = () => {
+    const newMemo = {'id' : Date.now(), 'date' : selectedDay, 'memo': text, 'status': false};
+    setMemos([...memos, newMemo]);
+    setText('');
+    setModalVisible(false);
   };
 
   const ToggleMemo = (id) => {
@@ -34,69 +38,85 @@ export default function App() {
         memo.id === id ? { ...memo, status: !memo.status } : memo
       )
     );
-  }
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light"/>
       <View style={styles.calendar}>
         <Calendar
+          locale='ko'
           onDayPress={OnDayPress}
           markedDates={{
-            [selectedDay]: {selected : true, selectedColor: 'blue', selectedTextColor: 'white'}
-          }}/>
+            [selectedDay]: {selected : true, selectedColor: 'red', selectedTextColor: 'white'}
+          }}
+          theme={{calendarBackground: 'black', dayTextColor: 'white', 
+            monthTextColor: 'white', arrowColor: 'white'}}
+        />
+      </View>
+      
+      <View style={styles.memosArea}>
+        <ScrollView >
+          {memos.map((item, index) => (
+            item.date === selectedDay ? 
+            <TouchableOpacity key={item.id} style={styles.memoBox} onPress={() => ToggleMemo(item.id)}>
+              <Text style={item.status ? styles.eachMemoTrue : styles.eachMemoFalse} key={item.id}>
+                {`${item.memo}`}
+              </Text>
+            </TouchableOpacity> : null
+          ))}
+        </ScrollView>
       </View>
 
-      <ScrollView style={styles.memosArea}>
-        {memos.map((item, index) => (
-          item.date === selectedDay ? 
-          <TouchableOpacity  style={styles.memoBox} onPress={() => ToggleMemo(item.id)}>
-            <Text style={item.status ? styles.eachMemoTrue : styles.eachMemoFalse} key={item.id}>
-              {`${item.date}: ${item.memo}`}
-            </Text>
-          </TouchableOpacity > : null
-        ))}
-      </ScrollView>
-
-      <TouchableOpacity style={styles.addMemoBtn} onPress={addMemo}>
-        <AntDesign name="pluscircle" size={56} color="black" />
+      <TouchableOpacity style={styles.addMemoBtn} onPress={() => setModalVisible(true)}>
+        <AntDesign name="pluscircle" size={56} color="white" />
       </TouchableOpacity>
 
       <Modal
-        // visible={modalVisible}
+        visible={modalVisible}
         transparent={true}
         >
         <View style={styles.modalCover}>
           <View style={styles.modalContainer}>
-            <Text> {selectedDay} 할 일 </Text>
-            <TextInput style={styles.textArea} value={text}/>
-            <TouchableOpacity>
-              <Text> 취소 </Text>
-            </TouchableOpacity>
+            <Text style={styles.textTitle}> {selectedDay} </Text>
+            <TextInput style={styles.textArea} value={text} onChangeText={TextEdit}/>
+            <View style={styles.btnArea}>
+            
+              <TouchableOpacity style={styles.btn} onPress={() => {setModalVisible(false)}}>
+                <Text style={{color: 'red'}}> 취소 </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.btn} onPress={CreateMemo}>
+                <Text style={{color: 'green'}}> 등록 </Text>
+              </TouchableOpacity>
+
+            </View>
           </View>
         </View>
       </Modal>
 
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   calendar : {
-    flex: 1,
+    flex: 2,
     width: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    
   },
 
   memosArea: {
+    flex: 3,
     width: '100%',
-    backgroundColor: 'green',
     paddingVertical: 10,
   },
 
@@ -136,6 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   modalContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -150,9 +171,27 @@ const styles = StyleSheet.create({
   textArea: {
     width: '100%',
     padding: 20,
-    backgroundColor: 'black',
     textAlign: 'center',
     fontSize: 16,
-    color: 'white',
+    color: 'black',
+    borderColor: 'grey',
+    borderWidth: 1,
+    borderRadius: 20,
+  },
+
+  textTitle : {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  btnArea: {
+    flexDirection: 'row',
+  },
+
+  btn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5
   }
 });
