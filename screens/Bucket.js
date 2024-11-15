@@ -30,9 +30,9 @@ const BucketList = () => {
     );
   };
 
-	const DeleteContent = (id) => {
+	const DeleteContent = (id, content) => {
     Alert.alert(
-      '메모 삭제',
+      `${content}`,
       '삭제하겠습니까?',
       [{text: '취소', style: 'cancel'},
         {text: '삭제', onPress: () => setTestSet(testSet.filter((memo) => memo.id !== id))}

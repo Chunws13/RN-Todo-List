@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView,
-  Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
+  Alert, Modal, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 import ListContainer from '../components/ListContainer';
@@ -43,9 +43,9 @@ const MemoScreen = () => {
     );
   };
 
-  const DeleteMemo = (id) => {
+  const DeleteMemo = (id, memo) => {
     Alert.alert(
-      '메모 삭제',
+      `${memo}`,
       '삭제하겠습니까?',
       [{text: '취소', style: 'cancel'},
         {text: '삭제', onPress: () => setMemos(memos.filter((memo) => memo.id !== id))}
@@ -70,7 +70,7 @@ const MemoScreen = () => {
       </View>
       
       <View style={styles.memosArea}>
-        <ScrollView >
+        <ScrollView>
           {memos.map((item) => (
             item.date === selectedDay ? 
               <ListContainer key={item.id}
@@ -92,7 +92,8 @@ const MemoScreen = () => {
         <View style={styles.modalCover}>
           <View style={styles.modalContainer}>
             <Text style={styles.textTitle}> {selectedDay} </Text>
-            <TextInput style={styles.textArea} value={text} onChangeText={TextEdit}/>
+            <TextInput style={styles.textArea} 
+              editable={true} value={text} onChangeText={TextEdit}/>
             <View style={styles.btnArea}>
             
               <TouchableOpacity style={styles.btn} onPress={() => {setModalVisible(false)}}>
@@ -102,10 +103,10 @@ const MemoScreen = () => {
               <TouchableOpacity style={styles.btn} onPress={CreateMemo}>
                 <Text style={{color: 'green'}}> 등록 </Text>
               </TouchableOpacity>
-
             </View>
           </View>
         </View>
+        
       </Modal>
 
     </SafeAreaView>
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     flex: 3,
     width: '100%',
     paddingVertical: 10,
+    marginTop: 20,
   },
 
   addMemoBtn : {
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
 
   textArea: {
     width: '100%',
-    padding: 20,
+    padding: 10,
     textAlign: 'center',
     fontSize: 16,
     color: 'black',

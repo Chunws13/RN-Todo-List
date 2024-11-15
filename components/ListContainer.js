@@ -16,7 +16,7 @@ const ListContainer = ({ id, memo, status, onComplete, onDelete }) => {
                 <AntDesign name="edit" size={24} color="green"/>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{flex: 1}} onPress={() => onDelete(id)}>
+            <TouchableOpacity style={{flex: 1}} onPress={() => onDelete(id, memo)}>
                 <FontAwesome name="trash-o" size={24} color="red"/>
             </TouchableOpacity>
         </TouchableOpacity>
