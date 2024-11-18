@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
-import { BarChart } from 'react-native-chart-kit';
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import CircleGraph from '../components/CircleGraph';
+import WiseSaying from '../utils/WiseSaying';
 
 const HomeSreen = () => {
   // TestData
-  const data = { '일': 6 , '월': 10, '화': 13, '수': 8, '목': 19, '금': 22, '토': 7};
+  const data = {'일': 6 , '월': 10, '화': 13, '수': 8, '목': 19, '금': 22, '토': 7};
   const maxHeight = Math.max(...Object.values(data));
-
-  const TestLogic = (event) => {
-      setTt(event);
-  };
+  
+  const wiseSayingLength = WiseSaying.length;
+  const randomNumber = Math.floor(Math.random() * wiseSayingLength);
 
   return (
       <SafeAreaView style={styles.container}>
 
-        <View style={styles.monthly}> 
-          <Text style={styles.text}> 미정 </Text>
+        <View style={styles.monthly}>
+          <View style={{flex: 2}}>
+            <Image source={require('../assets/pengu.png')} 
+             style={{height: '100%'}} resizeMode='contain'/>
+          </View>
+          <View style={{flex: 1}}> 
+            <Text style={{...styles.text, fontSize: 16, marginBottom: 10}}> 
+              " {WiseSaying[randomNumber].description} "
+            </Text>
+
+            <Text style={styles.text}> - {WiseSaying[randomNumber].author} - </Text>
+          </View>
         </View>
 
         <View style={styles.monthly}>
@@ -24,20 +34,26 @@ const HomeSreen = () => {
 
         <View style={styles.bucketList}>
           <View style={styles.bucket}>
-            <Text style={styles.text}> 버킷 리스트 - 할일 </Text>
+            <Text style={{...styles.text, marginBottom: 10}}> 버킷리스트 </Text>
+            <CircleGraph total={25} done={17}/>
           </View>
 
           <View style={styles.bucket}>
-            <Text style={styles.text}> 버킷리스트 - 살것 </Text>
+            <Text style={{...styles.text, marginBottom: 10}}> 버킷리스트 - 살것 </Text>
+            <CircleGraph total={10} done={4}/>
           </View>
         </View>
 
         <View style={styles.dayAnalysis}>
           { Object.keys(data).map((item) => (
               <View style={styles.chartArea}>
-                <Text style={{...styles.text, flex: 1}}> {data[item]} </Text>
-                <View style={{flex: 5 , backgroundColor: 'red', height: "10%"}}/>
-                <Text style={{...styles.text, flex: 1}}> {item} </Text>
+                <View style={{flex: 9}}>
+                  <View style={{flex: (1- data[item] / maxHeight), backgroundColor: 'transparent'}}/>
+                  <Text style={{...styles.text, textAlign: 'center', marginBottom: 3}}> {data[item]} </Text>
+                  <View style={{flex: (data[item] / maxHeight), 
+                    backgroundColor: 'grey', borderRadius:10}}/>
+                </View>
+                <Text style={{...styles.text, flex: 1, textAlign: 'center'}}> {item} </Text>
               </View>
             ))
           }
@@ -54,7 +70,8 @@ const styles = StyleSheet.create({
   },
 
   text : {
-    color: 'white'
+    color: 'white',
+    textAlign: 'center',
   },
   monthly : {
     flex: 1,
@@ -90,7 +107,8 @@ const styles = StyleSheet.create({
   },
 
   chartArea: {
-    justifyContent: 'flex-end'
+    justifyContent: 'center',
+    
   }
 })
 

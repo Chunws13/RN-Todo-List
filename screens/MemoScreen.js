@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView,
-  Alert, Modal, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+  Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 import ListContainer from '../components/ListContainer';

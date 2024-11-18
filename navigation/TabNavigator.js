@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeSreen from "../screens/HomeScreen";
 import MemoScreen from "../screens/MemoScreen";
-import BucketList from "../screens/Bucket";
+import BucketList from "../screens/BucketList";
 
 import Entypo from '@expo/vector-icons/Entypo';
 
