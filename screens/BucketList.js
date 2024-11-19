@@ -60,7 +60,7 @@ const BucketList = () => {
 						<FontAwesome6 name="plane-departure" size={36} color={selected ? 'white': 'grey'}/>
 						
 						<Text style={selected ? styles.classifyText 
-										: {...styles.classifyText, color: 'grey'}}> 
+										: {...styles.classifyText, color: '#4F4F4F'}}> 
 							Do
 						</Text>
 					</View>
@@ -68,8 +68,8 @@ const BucketList = () => {
 
 				<TouchableOpacity onPress={() => setSelected(false)}>
 					<View style={styles.classifyContainer}>
-						<Fontisto name="shopping-bag-1" size={36} color={selected ? 'grey': 'white'}/>
-						<Text style={selected ? {...styles.classifyText, color: 'grey'} 
+						<Fontisto name="shopping-bag-1" size={36} color={selected ? '#4F4F4F': 'white'}/>
+						<Text style={selected ? {...styles.classifyText, color: '#4F4F4F'} 
 										: styles.classifyText}> 
 							Buy 
 						</Text>

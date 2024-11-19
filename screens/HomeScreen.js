@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import ProgressStatus from '../utils/ProgressStatus';
 import CircleGraph from '../components/CircleGraph';
 import WiseSaying from '../utils/WiseSaying';
 
@@ -11,15 +12,18 @@ const HomeSreen = () => {
   const wiseSayingLength = WiseSaying.length;
   const randomNumber = Math.floor(Math.random() * wiseSayingLength);
 
+  const testStatus = Math.round(Math.random() * 100);
+  const adjustProgress = Math.floor(testStatus / 5) * 5;
+
   return (
       <SafeAreaView style={styles.container}>
 
-        <View style={styles.monthly}>
-          <View style={{flex: 2}}>
+        <View style={styles.header}>
+          <View style={{flex: 1}}>
             <Image source={require('../assets/pengu.png')} 
-             style={{height: '100%'}} resizeMode='contain'/>
+             style={{width: '100%'}} resizeMode='contain'/>
           </View>
-          <View style={{flex: 1}}> 
+          <View style={{flex: 2}}> 
             <Text style={{...styles.text, fontSize: 16, marginBottom: 10}}> 
               " {WiseSaying[randomNumber].description} "
             </Text>
@@ -28,35 +32,55 @@ const HomeSreen = () => {
           </View>
         </View>
 
-        <View style={styles.monthly}>
-          <Text style={styles.text}> 이번 달 한 일들 개수 표기</Text>
-        </View>
-
-        <View style={styles.bucketList}>
-          <View style={styles.bucket}>
-            <Text style={{...styles.text, marginBottom: 10}}> 버킷리스트 </Text>
-            <CircleGraph total={25} done={17}/>
+        <View style={styles.progress}>
+          <View style={styles.progress}>
+            <Text style={{...styles.text, fontSize: 18}}> 이번 달 메모 실천률 </Text>
           </View>
-
-          <View style={styles.bucket}>
-            <Text style={{...styles.text, marginBottom: 10}}> 버킷리스트 - 살것 </Text>
-            <CircleGraph total={10} done={4}/>
+          <View style={{...styles.progress, flex: 2}}>
+            <Text style={{...styles.text, fontSize: 76, fontWeight: 800, color: '#32CD32'}}> 
+              {testStatus}% 
+            </Text>
+          </View>
+          <View style={styles.progress}>
+            <Text style={{...styles.text, fontSize: 16}}> {ProgressStatus[adjustProgress]} </Text>
           </View>
         </View>
 
-        <View style={styles.dayAnalysis}>
-          { Object.keys(data).map((item) => (
-              <View style={styles.chartArea}>
-                <View style={{flex: 9}}>
-                  <View style={{flex: (1- data[item] / maxHeight), backgroundColor: 'transparent'}}/>
-                  <Text style={{...styles.text, textAlign: 'center', marginBottom: 3}}> {data[item]} </Text>
-                  <View style={{flex: (data[item] / maxHeight), 
-                    backgroundColor: 'grey', borderRadius:10}}/>
+        <View style={{flex: 1}}>
+          <View style={styles.bucketList}>
+            <View style={styles.bucket}>
+              <CircleGraph total={25} done={17} title={'Do'}/>
+            </View>
+
+            <View style={styles.bucket}>
+              <CircleGraph total={10} done={4} title={'Buy'}/>
+            </View>
+          </View>
+        </View>
+
+        <View style={{flex: 1}}>
+          <Text style={{...styles.text, textAlign: 'left', marginLeft: 30}}> 
+            요일 별 실행 횟수
+          </Text>
+
+          <View style={styles.dayAnalysis}>
+            { Object.keys(data).map((item, index) => (
+                <View key={index} style={styles.chartArea}>
+                  <View style={{flex: 9}}>
+                    <View style={{flex: (1- data[item] / maxHeight), backgroundColor: 'transparent'}}/>
+
+                    <Text style={{...styles.text, marginBottom: 3}}> 
+                      {data[item]} 
+                    </Text>
+
+                    <View style={{flex: (data[item] / maxHeight), 
+                      backgroundColor: '#4F4F4F', borderRadius:10}}/>
+                  </View>
+                  <Text style={{...styles.text, flex:1}}> {item} </Text>
                 </View>
-                <Text style={{...styles.text, flex: 1, textAlign: 'center'}}> {item} </Text>
-              </View>
-            ))
-          }
+              ))
+            }
+          </View>
         </View>
 
       </SafeAreaView>
@@ -66,26 +90,32 @@ const HomeSreen = () => {
 const styles = StyleSheet.create({
   container : {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#000000',
   },
 
   text : {
-    color: 'white',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
-  monthly : {
+
+  header : {
     flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'gray',
+    padding: 5,
+  },
+
+  progress : {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   bucketList : {
     flex: 1,
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: 'gray',
   },
 
   bucket : {
@@ -93,7 +123,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: 'gray',
   },
 
   dayAnalysis: {
@@ -103,7 +132,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'gray',
   },
 
   chartArea: {

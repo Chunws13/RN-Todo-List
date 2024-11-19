@@ -14,32 +14,33 @@ const TabNavigator = () => {
         <Tab.Navigator
             screenOptions={{
                 tabBarStyle: {
-                    backgroundColor: 'red'
+                    backgroundColor: 'black',
+                    borderTopWidth: 0,
+                    elevation: 0, // 안드로이드 그림자 제거
+                    shadowOpacity: 0, // iOS 그림자 제거
                 },
-                tabBarActiveBackgroundColor: 'blue',
-                tabBarInactiveBackgroundColor: 'black',
-                tabBarLabelStyle : {
-                    fontSize: 12,
-                }
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: 'white',
+                tabBarInactiveTintColor: '#4F4F4F',
             }}>
             <Tab.Screen name='Home' component={HomeSreen}
                 options={{headerShown: false, tabBarLabel: "홈", 
                     tabBarIcon: ({color, size}) => ( 
-                        <Entypo name="home" size={size} color={color}/>
+                        <Entypo name="home" size={30} color={color}/>
                     )
                 }}/>
             
             <Tab.Screen name='Memo' component={MemoScreen}
                 options={{headerShown: false, tabBarLabel: "메모",
                     tabBarIcon: ({color, size}) => (
-                        <Entypo name="calendar" size={size} color={color}/>
+                        <Entypo name="calendar" size={30} color={color}/>
                     )
                 }}/>
 
             <Tab.Screen name='BucketList' component={BucketList}
                 options={{headerShown: false, tabBarLabel: "버킷리스트",
                     tabBarIcon: ({color, size}) => (
-                        <Entypo name="heart" size={size} color={color}/>
+                        <Entypo name="heart" size={30} color={color}/>
                     )
                 }}/>
         </Tab.Navigator>

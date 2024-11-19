@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useRef} from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView,
   Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -19,7 +19,8 @@ const MemoScreen = () => {
 
   const [text, setText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const inputRef = useRef(null);
+
   const OnDayPress = (day) => {
     setSelectedDay(day.dateString);
   };
@@ -29,10 +30,18 @@ const MemoScreen = () => {
   };
 
   const CreateMemo = () => {
-    const newMemo = {'id' : Date.now(), 'date' : selectedDay, 'memo': text, 'status': false};
-    setMemos([...memos, newMemo]);
-    setText('');
-    setModalVisible(false);
+    if (text.replaceAll(' ', '').length > 0){
+      const newMemo = {'id' : Date.now(), 'date' : selectedDay, 'memo': text, 'status': false};
+      setMemos([...memos, newMemo]);
+      setText('');
+      setModalVisible(false);
+    } else {
+      Alert.alert(
+        '1자 이상 입력하세요',
+        '공백 제외',
+        [{text: '확인'}]
+      );
+    }
   };
 
   const ToggleMemo = (id) => {
@@ -42,6 +51,11 @@ const MemoScreen = () => {
       )
     );
   };
+
+  const CancelMemoEdit = () => {
+    setText('');
+    setModalVisible(false);
+  }
 
   const DeleteMemo = (id, memo) => {
     Alert.alert(
@@ -88,6 +102,7 @@ const MemoScreen = () => {
       <Modal
         visible={modalVisible}
         transparent={true}
+        onShow={() => {inputRef.current?.focus();}}
         >
         <View style={styles.modalCover}>
           <View style={styles.modalContainer}>
@@ -96,7 +111,7 @@ const MemoScreen = () => {
               editable={true} value={text} onChangeText={TextEdit}/>
             <View style={styles.btnArea}>
             
-              <TouchableOpacity style={styles.btn} onPress={() => {setModalVisible(false)}}>
+              <TouchableOpacity style={styles.btn} onPress={CancelMemoEdit}>
                 <Text style={{color: 'red'}}> 취소 </Text>
               </TouchableOpacity>
 
@@ -151,7 +166,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#000',
     height: '20%',
     width: '80%',
     backgroundColor: 'white',
@@ -165,13 +179,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: 'black',
-    borderColor: 'grey',
+    borderColor: '#4F4F4F',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
   },
 
   textTitle : {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
 

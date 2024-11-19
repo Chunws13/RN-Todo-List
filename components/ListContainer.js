@@ -13,7 +13,7 @@ const ListContainer = ({ id, memo, status, onComplete, onDelete }) => {
             </Text>
 
             <TouchableOpacity style={{flex: 1}} onPress={() => console.log('수정')}>
-                <AntDesign name="edit" size={24} color="green"/>
+                <AntDesign name="edit" size={24} color="#32CD32"/>
             </TouchableOpacity>
 
             <TouchableOpacity style={{flex: 1}} onPress={() => onDelete(id, memo)}>
@@ -30,10 +30,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginHorizontal: 30,
     marginBottom: 15,
-    borderWidth: 2,
     borderRadius: 20,
-    borderColor: 'grey',
-    backgroundColor: 'grey',
+    backgroundColor: '#4F4F4F',
   },
 
   eachMemoFalse: {
