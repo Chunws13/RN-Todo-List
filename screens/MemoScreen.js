@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useRef} from 'react';
+import { useState, useRef, useEffect} from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView,
   Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import dbManger from '../utils/DbManger';
 
 import ListContainer from '../components/ListContainer';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -12,14 +13,32 @@ const MemoScreen = () => {
   const today = new Date();
   const todayString = today.toISOString().split('T')[0];
   const [selectedDay, setSelectedDay] = useState(todayString);
-
+  
   const [memos, setMemos] = useState([{"id": 1, "date": "2024-11-13", "memo": "앱 만들기", "status": false}, 
-                                      {"id": 2, "date": "2024-11-13", "memo": "더 많은 앱 만들기", "status": false},
-                                      {"id": 3, "date": "2024-11-12", "memo": "게임 하기", "status": false}]);
-
+    {"id": 2, "date": "2024-11-13", "memo": "더 많은 앱 만들기", "status": false},
+    {"id": 3, "date": "2024-11-12", "memo": "게임 하기", "status": false}]);
+    
   const [text, setText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const inputRef = useRef(null);
+  
+  const tableName = 'memos';
+
+  const columns = [
+    {name: 'targetDate', type: 'TEXT'}, 
+    {name: 'memo', type: 'TEXT'}, 
+    {name: 'complete', type: 'INTEGER'}
+  ]
+  
+  useEffect(()=> {
+    const initDB = async() => {
+      if (dbManger) {
+        await dbManger.initializeDB(tableName, columns);
+      }
+    }
+    initDB();
+
+  }, []);
 
   const OnDayPress = (day) => {
     setSelectedDay(day.dateString);
@@ -29,12 +48,15 @@ const MemoScreen = () => {
     setText(content);
   };
 
-  const CreateMemo = () => {
+  const CreateMemo = async() => {
     if (text.replaceAll(' ', '').length > 0){
-      const newMemo = {'id' : Date.now(), 'date' : selectedDay, 'memo': text, 'status': false};
-      setMemos([...memos, newMemo]);
+      const newMemo = {targetDate: selectedDay, memo : text, complete: 0}
+      await dbManger.insertItem(tableName, newMemo);
+      // setMemos([...memos, newMemo]);
+      
       setText('');
       setModalVisible(false);
+
     } else {
       Alert.alert(
         '1자 이상 입력하세요',
