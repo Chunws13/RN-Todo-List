@@ -172,20 +172,12 @@ export default WiseSaying = [
       "author": "존 맥스웰"
     },
     {
-      "description": "가장 큰 위험은 위험을 감수하지 않는 것이다.",
-      "author": "마크 저커버그"
-    },
-    {
       "description": "어려움 속에서 기회를 찾아라.",
       "author": "알버트 아인슈타인"
     },
     {
       "description": "자신을 믿는 순간 모든 것이 가능해진다.",
       "author": "요한 볼프강 폰 괴테"
-    },
-    {
-      "description": "성공은 당신이 포기하지 않을 때 찾아온다.",
-      "author": "프랭크 클라크"
     },
     {
       "description": "위대한 것은 시간이 걸린다.",

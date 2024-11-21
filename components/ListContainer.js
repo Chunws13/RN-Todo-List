@@ -1,26 +1,60 @@
-import React from "react"
-import { StyleSheet, TouchableOpacity, Text } from "react-native";
+import React, { useState } from "react"
+import { StyleSheet, TouchableOpacity, Text, TextInput, View } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-const ListContainer = ({ id, memo, status, onComplete, onDelete }) => {
+const ListContainer = ({ memoid, memo, status, tableName, column,
+  onEdit, onDelete }) => {
 
-    return (
-        <TouchableOpacity key={id} style={styles.memoBox} onPress={() => onComplete(id)}>
-            <Text style={status ? styles.eachMemoTrue : styles.eachMemoFalse} 
-                key={id}>
-                {`${memo}`}
-            </Text>
+  const newValue = (1 + status) % 2;
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(memo);
 
-            <TouchableOpacity style={{flex: 1}} onPress={() => console.log('수정')}>
+  const StartEditText = (event) => {
+    setEditText(event);
+  }
+
+  const SubmitEdit = (tableName, column, newValue, memoid) => {
+    onEdit(tableName, column, newValue, memoid);
+    setEditing(false);
+  }
+
+  return (
+      <TouchableOpacity style={styles.memoBox} 
+        onPress={() => {
+          console.log(`${tableName} ${newValue}, ${memoid}`)
+          onEdit(tableName, 'complete', newValue, memoid)
+          }}>
+          { editing ?
+            <View style={styles.memoContainer}>
+
+              <TextInput style={styles.eachMemoFalse} onChangeText={StartEditText}>
+                {editText}
+              </TextInput>
+
+              <TouchableOpacity style={{flex: 2}} 
+                onPress={() => SubmitEdit(tableName, column, editText, memoid)}>
+                <AntDesign name="checkcircle" size={24} color="#32CD32"/>
+              </TouchableOpacity>
+            </View>
+            
+            :
+            <View style={styles.memoContainer}>
+              <Text style={status ? styles.eachMemoTrue : styles.eachMemoFalse}>
+                {memo}
+              </Text> 
+              <TouchableOpacity style={{flex: 1}} onPress={() => setEditing(true)}>
                 <AntDesign name="edit" size={24} color="#32CD32"/>
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={{flex: 1}} onPress={() => onDelete(id, memo)}>
+              <TouchableOpacity style={{flex: 1}} onPress={() => onDelete(memoid, memo)}>
                 <FontAwesome name="trash-o" size={24} color="red"/>
-            </TouchableOpacity>
-        </TouchableOpacity>
-    )
+              </TouchableOpacity>
+
+            </View>
+          }
+      </TouchableOpacity>
+  )
 };
 
 const styles = StyleSheet.create({
@@ -32,6 +66,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 20,
     backgroundColor: '#4F4F4F',
+  },
+
+  memoContainer: {
+    flexDirection: 'row',
+    width: '100%',
   },
 
   eachMemoFalse: {
