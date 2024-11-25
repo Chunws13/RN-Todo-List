@@ -38,7 +38,10 @@ class DbManger {
           tx.executeSql(
             `INSERT INTO ${tableName} (${columnsInfo}) VALUES (${placeholders});`,
             values,
-            (_, result) => resolve(result),
+            (_, result) => {
+              console.log(result.insertId);
+              resolve(result.insertId)
+            },
             (_, error) => reject(error)
           );
         });
@@ -68,6 +71,27 @@ class DbManger {
       throw error;
     }
   }
+
+  async getItem(tableName, column, condition) {
+    try {
+      return new Promise((resolve, reject) => {
+        this.db.transaction(tx => {
+          tx.executeSql(
+            `SELECT * FROM ${tableName} WHERE ${column} = ?`,
+            [condition],
+            (_, { rows }) => {
+              resolve(rows._array);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          )
+        })
+      })
+    } catch(error) {
+      throw(error);
+    }
+  }
   
   async updateItem(tableName, column, value, id) {
     console.log(`UPDATE ${tableName} SET ${column} = ${value} WHERE id = ${id}`);
@@ -82,7 +106,7 @@ class DbManger {
             [value, id], // 파라미터 전달
             (_, result) => { // 성공 콜백
               console.log('Update complete');
-              resolve(result);
+              resolve(id);
             },
             (_, error) => { // 실패 콜백
               console.log(`Update failed: ${error}`);
@@ -109,7 +133,7 @@ class DbManger {
             [id],
             (_, result) => {
               console.log(`Successfully deleted item with id: ${id}`);
-              resolve(result);
+              resolve(id);
             },
             (_, error) => {
               console.log(`Failed to delete item with id: ${id}. Error:`, error);

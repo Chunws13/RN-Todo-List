@@ -1,31 +1,77 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ScrollView, SafeAreaView,
     Alert, TextInput, TouchableOpacity } from 'react-native';
 
+import dbManger from "../utils/DbManger";
 import ListContainer from "../components/ListContainer";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const BucketList = () => {
-	const [testSet, setTestSet] = useState([
-		{"id": 1, 'content': "칼바람 10판 하기", "do": true, 'status': false},
-		{"id": 2, 'content': "버킷리스트 만들기", "do": true, 'status': false},
-		{"id": 3, 'content': "바람의나라 하기", "do": true, 'status': false},
-		{"id": 4, 'content': "트랙 패드 사기", "do": false, 'status': false},
-		{"id": 5, 'content': "옷 구경하기", "do": false, 'status': false},
+	const [buckets, setBuckets] = useState([
+		{"id": 1, 'content': "칼바람 10판 하기", "do": 1, 'status': 0},
+		{"id": 2, 'content': "버킷리스트 만들기", "do": 1, 'status': 0},
+		{"id": 3, 'content': "바람의나라 하기", "do": 1, 'status': 0},
+		{"id": 4, 'content': "트랙 패드 사기", "do": 0, 'status': 0},
+		{"id": 5, 'content': "옷 구경하기", "do": 0, 'status': 0},
 	]);
 
-	const [selected, setSelected] = useState(true);
+	const [selected, setSelected] = useState(1);
 	const [bucketText, setBucketText] = useState("");
+
+	const tableName = 'bucketList';
+	const columns = [
+		{name: 'content', type: 'TEXT'},
+		{name: 'do', type: 'INTEGER'},
+		{name: 'status', type: 'INTEGER'},
+	]
+
+	useEffect(() => {
+		const createDB = async() => {
+			await dbManger.createTable(tableName, columns);
+		};
+
+		const getAllBucekts = async() => {
+			const allItem = await dbManger.getAllItem(tableName);
+			console.log(allItem)
+			setBuckets(allItem);
+		}
+
+		createDB();
+		getAllBucekts();
+
+	}, [])
+
+	const AddContent = async() => {
+		if (bucketText.replaceAll(' ', '').length > 0){
+			const newContent = {"content": bucketText, "do": selected, 'status': 0}
+
+      const result = await dbManger.insertItem(tableName, newContent);
+      const newResult = await dbManger.getItem(tableName, 'id', result);
+      // 메모 작성 시 UI 새로고침 확인
+      setMemos(prevBuckets => [...prevBuckets, ...newResult]);
+      
+      setBucketText('');
+
+    } else {
+      Alert.alert(
+				'1자 이상 입력하세요',
+				'공백 제외',
+				[{text: '확인'}]
+			);
+		}
+	};
+	
 
 	const EidtBucket = (event) => {
 		setBucketText(event);
 	}
 
-	const ToggleContent = (id) => {
-    setTestSet(prevMemos => 
+	const EditContent = async(tableName, column, newValue, contentId) => {
+
+    setBuckets(prevMemos => 
       prevMemos.map(memo => 
-        memo.id === id ? { ...memo, status: !memo.status } : memo
+        memo.status === selected ? { ...memo, status: !memo.status } : memo
       )
     );
   };
@@ -35,17 +81,11 @@ const BucketList = () => {
       `${content}`,
       '삭제하겠습니까?',
       [{text: '취소', style: 'cancel'},
-        {text: '삭제', onPress: () => setTestSet(testSet.filter((memo) => memo.id !== id))}
+        {text: '삭제', onPress: () => setBuckets(buckets.filter((memo) => memo.id !== id))}
       ],
       {cancelable: true}
     );
   };
-
-	const AddContent = () => {
-		const newContent = {"id": Date.now(), "content": bucketText, "do": selected, 'status': false}
-		setTestSet([...testSet, newContent]);
-		setBucketText('');
-	}
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -55,7 +95,7 @@ const BucketList = () => {
 
 			<View style={styles.classify}>
 
-				<TouchableOpacity onPress={() => setSelected(true)}>
+				<TouchableOpacity onPress={() => setSelected(1)}>
 					<View style={styles.classifyContainer}>
 						<FontAwesome6 name="plane-departure" size={36} color={selected ? 'white': 'grey'}/>
 						
@@ -66,7 +106,7 @@ const BucketList = () => {
 					</View>
 				</TouchableOpacity>
 
-				<TouchableOpacity onPress={() => setSelected(false)}>
+				<TouchableOpacity onPress={() => setSelected(0)}>
 					<View style={styles.classifyContainer}>
 						<Fontisto name="shopping-bag-1" size={36} color={selected ? '#4F4F4F': 'white'}/>
 						<Text style={selected ? {...styles.classifyText, color: '#4F4F4F'} 
@@ -84,10 +124,12 @@ const BucketList = () => {
 
 			<View style={styles.scrollContainer}>
 				<ScrollView>
-					{testSet.map((item) => (
-						item.do === selected ? <ListContainer key={item.id}
-							id={item.id} memo={item.content} status={item.status}
-							onComplete={ToggleContent} onDelete={DeleteContent}/> : null
+					{buckets.map((item) => (
+						item.do === selected ? 
+							<ListContainer key={item.id}
+							memoid={item.id} memo={item.content} status={item.status}
+							tableName={tableName} column={'content'}
+							onComplete={EditContent} onDelete={DeleteContent}/> : null
 					))}
 				</ScrollView>
 			</View>

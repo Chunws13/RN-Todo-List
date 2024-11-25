@@ -27,28 +27,32 @@ const MemoScreen = () => {
     {name: 'complete', type: 'INTEGER'}
   ]
   
-  useEffect(()=> {
+  useEffect(() => {
     const createDB = async(tableName, columns) => {
       await dbManger.createTable(tableName, columns);
     }
 
+    createDB(tableName, columns);
+  }, [])
+
+  useEffect(()=> {
     const getAllDB = async(tableName) => {
-      allItems = await dbManger.getAllItem(tableName);
-      setMemos(allItems);
+      const items = await dbManger.getItem(tableName, 'targetDate', selectedDay);
+      console.log(items);
+      setMemos(items || []);
     }
 
     const DropDB = async(tableName) => {
       await dbManger.dropTable(tableName);
     }
 
-    createDB(tableName, columns)
     getAllDB(tableName);
 
     return () => {
-      DropDB(tableName);
+      // DropDB(tableName);
     }
 
-  }, []);
+  }, [selectedDay]);
 
   const OnDayPress = (day) => {
     setSelectedDay(day.dateString);
@@ -61,9 +65,10 @@ const MemoScreen = () => {
   const CreateMemo = async() => {
     if (text.replaceAll(' ', '').length > 0){
       const newMemo = {targetDate: selectedDay, memo: text, complete: 0}
-      result = await dbManger.insertItem(tableName, newMemo);
-
-      setMemos(prevmemos => [...prevmemos, newMemo]);
+      const result = await dbManger.insertItem(tableName, newMemo);
+      const newResult = await dbManger.getItem(tableName, 'id', result);
+      
+      setMemos(prevmemos => [...prevmemos, ...newResult]);
       
       setText('');
       setModalVisible(false);
@@ -79,8 +84,12 @@ const MemoScreen = () => {
 
   const EditMemo = async(tableName, column, newValue, id) => {
     try {
-      const editResult = await dbManger.updateItem(tableName, column, newValue, id);
-      console.log(editResult);
+      const result = await dbManger.updateItem(tableName, column, newValue, id);
+      const editResult = await dbManger.getItem(tableName, "id", result);
+      
+      setMemos(prevmemos => {
+        return prevmemos.map(memo => (memo.id === result ? editResult[0] : memo));
+      })
   
     } catch(error) {
       console.log(error);
@@ -98,7 +107,8 @@ const MemoScreen = () => {
       '삭제하겠습니까?',
       [{text: '취소', style: 'cancel'},
         {text: '삭제', onPress: async() => {
-          await dbManger.deleteItem(tableName, id)
+          const result = await dbManger.deleteItem(tableName, id);
+          setMemos(memos.filter((memo) => memo.id !== result));
         }
       }],
       {cancelable: true}
@@ -126,7 +136,7 @@ const MemoScreen = () => {
             return item.targetDate === selectedDay ? 
               <ListContainer 
                 key={index} memoid={item.id} memo={item.memo} 
-                status={item.complete} tableName={tableName} column={'memo1'}
+                status={item.complete} tableName={tableName} column={'memo'}
                 onEdit={EditMemo} onDelete={DeleteMemo}/>
              : null
             })}
