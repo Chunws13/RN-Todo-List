@@ -49,7 +49,7 @@ const BucketList = () => {
       const result = await dbManger.insertItem(tableName, newContent);
       const newResult = await dbManger.getItem(tableName, 'id', result);
       // 메모 작성 시 UI 새로고침 확인
-      setMemos(prevBuckets => [...prevBuckets, ...newResult]);
+      setBuckets(prevBuckets => [...prevBuckets, ...newResult]);
       
       setBucketText('');
 
@@ -61,19 +61,20 @@ const BucketList = () => {
 			);
 		}
 	};
-	
-
-	const EidtBucket = (event) => {
-		setBucketText(event);
-	}
 
 	const EditContent = async(tableName, column, newValue, contentId) => {
+    try {
+      const result = await dbManger.updateItem(tableName, column, newValue, contentId);
+      const editResult = await dbManger.getAllItem(tableName, 'id', result);
 
-    setBuckets(prevMemos => 
-      prevMemos.map(memo => 
-        memo.status === selected ? { ...memo, status: !memo.status } : memo
-      )
-    );
+      setBuckets(prevBuckets => {
+        return prevBuckets.map(bucket => (bucket.id === result ? editResult[0] : bucket));
+      });
+
+
+    } catch(error) {
+      console.log(error);
+    }
   };
 
 	const DeleteContent = (id, content) => {
@@ -81,11 +82,18 @@ const BucketList = () => {
       `${content}`,
       '삭제하겠습니까?',
       [{text: '취소', style: 'cancel'},
-        {text: '삭제', onPress: () => setBuckets(buckets.filter((memo) => memo.id !== id))}
+        {text: '삭제', onPress: async() => {
+          const result = await dbManger.deleteItem(tableName, id);
+          setBuckets(buckets.filter((memo) => memo.id !== result));
+        }}
       ],
       {cancelable: true}
     );
   };
+
+  const EidtBucket = (event) => {
+		setBucketText(event);
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -129,7 +137,7 @@ const BucketList = () => {
 							<ListContainer key={item.id}
 							memoid={item.id} memo={item.content} status={item.status}
 							tableName={tableName} column={'content'}
-							onComplete={EditContent} onDelete={DeleteContent}/> : null
+							onEdit={EditContent} onDelete={DeleteContent}/> : null
 					))}
 				</ScrollView>
 			</View>

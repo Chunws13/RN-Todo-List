@@ -19,12 +19,11 @@ const ListContainer = ({ memoid, memo, status, tableName, column,
     setEditing(false);
   }
 
+  const completeStatus = tableName === 'memos' ? 'complete' : 'status';
+
   return (
       <TouchableOpacity style={styles.memoBox} 
-        onPress={() => {
-          console.log(`${tableName} ${newValue}, ${memoid}`)
-          onEdit(tableName, 'complete', newValue, memoid)
-          }}>
+        onPress={() => {onEdit(tableName, completeStatus, newValue, memoid)}}>
           { editing ?
             <View style={styles.memoContainer}>
 

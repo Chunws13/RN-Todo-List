@@ -39,7 +39,6 @@ class DbManger {
             `INSERT INTO ${tableName} (${columnsInfo}) VALUES (${placeholders});`,
             values,
             (_, result) => {
-              console.log(result.insertId);
               resolve(result.insertId)
             },
             (_, error) => reject(error)
@@ -93,9 +92,7 @@ class DbManger {
     }
   }
   
-  async updateItem(tableName, column, value, id) {
-    console.log(`UPDATE ${tableName} SET ${column} = ${value} WHERE id = ${id}`);
-    
+  async updateItem(tableName, column, value, id) {    
     try {
       return new Promise((resolve, reject) => {
         console.log("Transaction started");
