@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import dbManger from '../utils/DbManger';
 import ProgressStatus from '../utils/ProgressStatus';
 import CircleGraph from '../components/CircleGraph';
 import WiseSaying from '../utils/WiseSaying';
@@ -14,6 +16,47 @@ const HomeSreen = () => {
 
   const testStatus = Math.round(Math.random() * 100);
   const adjustProgress = Math.floor(testStatus / 5) * 5;
+
+  const [bucketDo, setBucketDo] = useState(0);
+  const [bucketDoComplete, setBucketDoComplete] = useState(0);
+  const [bucketBuy, setBucketBuy] = useState(0);
+  const [bucketBuyComplete, setBucketBuyComplete] = useState(0);
+  
+  useFocusEffect(
+    useCallback(() => {
+
+      const initBuckets = async() => {
+        const allBuckets = await dbManger.getAllItem('bucketList');
+  
+        let tempBucketDo = 0;
+        let tempBucketDoComplete = 0;
+        let tempBucketBuy = 0;
+        let tempBucketBuyComplete = 0;
+  
+        allBuckets.forEach((item) => {
+          if (item.do === 1) {
+            tempBucketDo++;
+            if (item.status === 1) {
+              tempBucketDoComplete++;
+            }
+          } else {
+            tempBucketBuy++;
+            if (item.status === 1) {
+              tempBucketBuyComplete++;
+            }
+          }
+        });
+  
+        setBucketDo(tempBucketDo);
+        setBucketDoComplete(tempBucketDoComplete);
+        setBucketBuy(tempBucketBuy);
+        setBucketBuyComplete(tempBucketBuyComplete);
+      }
+  
+      initBuckets();
+    }, [dbManger])
+  );
+
 
   return (
       <SafeAreaView style={styles.container}>
@@ -49,11 +92,11 @@ const HomeSreen = () => {
         <View style={{flex: 1}}>
           <View style={styles.bucketList}>
             <View style={styles.bucket}>
-              <CircleGraph total={25} done={17} title={'Do'}/>
+              <CircleGraph total={bucketDo} done={bucketDoComplete} title={'Do'}/>
             </View>
 
             <View style={styles.bucket}>
-              <CircleGraph total={10} done={4} title={'Buy'}/>
+              <CircleGraph total={bucketBuy} done={bucketBuyComplete} title={'Buy'}/>
             </View>
           </View>
         </View>

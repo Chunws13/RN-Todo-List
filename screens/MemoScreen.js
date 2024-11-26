@@ -36,9 +36,8 @@ const MemoScreen = () => {
   }, [])
 
   useEffect(()=> {
-    const getAllDB = async(tableName) => {
-      const items = await dbManger.getItem(tableName, 'targetDate', selectedDay);
-      console.log(items);
+    const getAllDB = async() => {
+      const items = await dbManger.getAllItem(tableName);
       setMemos(items || []);
     }
 
@@ -46,13 +45,13 @@ const MemoScreen = () => {
       await dbManger.dropTable(tableName);
     }
 
-    getAllDB(tableName);
+    getAllDB();
 
     return () => {
       // DropDB(tableName);
     }
 
-  }, [selectedDay]);
+  }, []);
 
   const OnDayPress = (day) => {
     setSelectedDay(day.dateString);

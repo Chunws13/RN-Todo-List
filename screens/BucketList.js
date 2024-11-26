@@ -108,7 +108,7 @@ const BucketList = () => {
 						<FontAwesome6 name="plane-departure" size={36} color={selected ? 'white': 'grey'}/>
 						
 						<Text style={selected ? styles.classifyText 
-										: {...styles.classifyText, color: '#4F4F4F'}}> 
+							: {...styles.classifyText, color: '#4F4F4F'}}> 
 							Do
 						</Text>
 					</View>
@@ -132,9 +132,9 @@ const BucketList = () => {
 
 			<View style={styles.scrollContainer}>
 				<ScrollView>
-					{buckets.map((item) => (
+					{buckets.map((item, index) => (
 						item.do === selected ? 
-							<ListContainer key={item.id}
+							<ListContainer key={index}
 							memoid={item.id} memo={item.content} status={item.status}
 							tableName={tableName} column={'content'}
 							onEdit={EditContent} onDelete={DeleteContent}/> : null
