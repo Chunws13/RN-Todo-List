@@ -2,6 +2,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { Text, View } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import ChangeColor from '../utils/ChangeColor';
 
 const CircleGraph = ({ total, done, title}) => {
   const [progressValue, setProgressValue] = useState(0);
@@ -13,13 +14,7 @@ const CircleGraph = ({ total, done, title}) => {
       setProgressValue(updatedProgressValue);
 
       // Update bar color based on progress
-      if (updatedProgressValue >= 60) {
-        setBarColor('#32CD32');
-      } else if (updatedProgressValue >= 30) {
-        setBarColor('#FFA500');
-      } else {
-        setBarColor('#FF4C4C');
-      }
+      setBarColor(ChangeColor(updatedProgressValue));
 
     }, [done, total]) // Dependencies: Re-run when `done` or `total` changes
   );

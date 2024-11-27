@@ -5,17 +5,21 @@ import dbManger from '../utils/DbManger';
 import ProgressStatus from '../utils/ProgressStatus';
 import CircleGraph from '../components/CircleGraph';
 import WiseSaying from '../utils/WiseSaying';
+import ChangeColor from '../utils/ChangeColor';
+
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const HomeSreen = () => {
-  // TestData
-  const data = {'일': 6 , '월': 10, '화': 13, '수': 8, '목': 19, '금': 22, '토': 7};
-  const maxHeight = Math.max(...Object.values(data));
+  // TestdaysData
+  const [daysData, setDaysData] = useState({});
+  const [percentColor, setPercentColor] = useState('#FF4C4C');
+  
+  const maxHeight = Math.max(...Object.values(daysData), 1);
   
   const wiseSayingLength = WiseSaying.length;
   const randomNumber = Math.floor(Math.random() * wiseSayingLength);
 
-  const testStatus = Math.round(Math.random() * 100);
-  const adjustProgress = Math.floor(testStatus / 5) * 5;
+  const [memoStatus, setMemoStatus] = useState(0);
 
   const [bucketDo, setBucketDo] = useState(0);
   const [bucketDoComplete, setBucketDoComplete] = useState(0);
@@ -24,6 +28,31 @@ const HomeSreen = () => {
   
   useFocusEffect(
     useCallback(() => {
+      const initMemos = async() =>{
+        const allMemos = await dbManger.getAllItem('memos');
+        let done = 0;
+        let total = 0;
+        
+        const tempDaysData = {'일': 0 , '월': 0, '화': 0, '수': 0, '목': 0, '금': 0, '토': 0};
+        const dayNameIndex = ['일', '월', '화', '수', '목', '금', '토'];
+
+        allMemos.forEach((memo) => {
+          total ++;
+
+          if (memo.complete === 1){
+            const day = new Date(memo.targetDate);
+            const dayName = dayNameIndex[day.getDay()];
+            tempDaysData[dayName]++;
+            done ++;
+          }
+        });
+        
+        const memoPercent = Math.round((done / total) * 100);
+        const memoProgress = Math.floor(memoPercent / 5 ) * 5;
+
+        setMemoStatus(memoProgress);
+        setDaysData(tempDaysData);
+      }
 
       const initBuckets = async() => {
         const allBuckets = await dbManger.getAllItem('bucketList');
@@ -51,41 +80,43 @@ const HomeSreen = () => {
         setBucketDoComplete(tempBucketDoComplete);
         setBucketBuy(tempBucketBuy);
         setBucketBuyComplete(tempBucketBuyComplete);
-      }
+      };
   
       initBuckets();
-    }, [dbManger])
+      initMemos();
+
+    }, [])
   );
 
 
   return (
-      <SafeAreaView style={styles.container}>
-
+      <View style={styles.container}>
         <View style={styles.header}>
-          <View style={{flex: 1}}>
-            <Image source={require('../assets/pengu.png')} 
-             style={{width: '100%'}} resizeMode='contain'/>
-          </View>
-          <View style={{flex: 2}}> 
-            <Text style={{...styles.text, fontSize: 16, marginBottom: 10}}> 
-              " {WiseSaying[randomNumber].description} "
-            </Text>
+          
+            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+              <Text style={{...styles.text, fontSize: 16}}> 
+                " {WiseSaying[randomNumber].description} "
+              </Text>
+            </View>
 
-            <Text style={styles.text}> - {WiseSaying[randomNumber].author} - </Text>
-          </View>
+            <View style={{flex: 1, justifyContent: 'center', flexDirection: 'row', alignItems: 'center'}}>
+              <AntDesign name="aliwangwang-o1" size={50} color="#9146FF" />
+              <Text style={{...styles.text, marginLeft: 20}}> - {WiseSaying[randomNumber].author} - </Text>
+            </View>
         </View>
 
         <View style={styles.progress}>
           <View style={styles.progress}>
-            <Text style={{...styles.text, fontSize: 18}}> 이번 달 메모 실천률 </Text>
+            <Text style={{...styles.text, fontSize: 18}}> 메모 실천 지수 </Text>
           </View>
-          <View style={{...styles.progress, flex: 2}}>
-            <Text style={{...styles.text, fontSize: 76, fontWeight: 800, color: '#32CD32'}}> 
-              {testStatus}% 
+          <View style={styles.progress}>
+            <Text style={{...styles.text, fontSize: 58, fontWeight: 800, 
+              color: percentColor}}>
+              {memoStatus}% 
             </Text>
           </View>
           <View style={styles.progress}>
-            <Text style={{...styles.text, fontSize: 16}}> {ProgressStatus[adjustProgress]} </Text>
+            <Text style={{...styles.text, fontSize: 16}}> {ProgressStatus[memoStatus]} </Text>
           </View>
         </View>
 
@@ -102,22 +133,23 @@ const HomeSreen = () => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={{...styles.text, textAlign: 'left', marginLeft: 30}}> 
+          <Text style={{...styles.text, textAlign: 'left', marginLeft: 20}}> 
             요일 별 실행 횟수
           </Text>
 
           <View style={styles.dayAnalysis}>
-            { Object.keys(data).map((item, index) => (
+            { Object.keys(daysData).map((item, index) => (
                 <View key={index} style={styles.chartArea}>
                   <View style={{flex: 9}}>
-                    <View style={{flex: (1- data[item] / maxHeight), backgroundColor: 'transparent'}}/>
+                    <View style={{flex: (1- daysData[item] / maxHeight), backgroundColor: 'transparent'}}/>
 
                     <Text style={{...styles.text, marginBottom: 3}}> 
-                      {data[item]} 
+                      {daysData[item]} 
                     </Text>
 
-                    <View style={{flex: (data[item] / maxHeight), 
-                      backgroundColor: '#4F4F4F', borderRadius:10}}/>
+                    <View style={{flex: (daysData[item] / maxHeight), 
+                      backgroundColor: ChangeColor((daysData[item] / maxHeight) * 100), 
+                      borderRadius:10}}/>
                   </View>
                   <Text style={{...styles.text, flex:1}}> {item} </Text>
                 </View>
@@ -125,42 +157,40 @@ const HomeSreen = () => {
             }
           </View>
         </View>
-
-      </SafeAreaView>
+      </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container : {
+  container: {
     flex: 1,
     backgroundColor: '#000000',
   },
 
-  text : {
+  text: {
     color: '#FFFFFF',
     textAlign: 'center',
   },
 
-  header : {
+  header: {
     flex: 1,
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  progress : {
+  progress: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
   },
 
-  bucketList : {
+  bucketList: {
     flex: 1,
     flexDirection: 'row',
     borderWidth: 1,
   },
 
-  bucket : {
+  bucket: {
     flex: 1,
     borderWidth: 1,
     justifyContent: 'center',
@@ -171,14 +201,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
   },
 
   chartArea: {
     justifyContent: 'center',
-    
   }
 })
 

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect} from 'react';
+import { useState, useEffect, memo} from 'react';
 import { StyleSheet, View, ScrollView, SafeAreaView,
   Alert, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -15,7 +15,8 @@ const MemoScreen = () => {
   const [selectedDay, setSelectedDay] = useState(todayString);
   
   const [memos, setMemos] = useState([]);
-    
+  const [memoMark, setMemoMark] = useState({});
+
   const [text, setText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   
@@ -37,21 +38,61 @@ const MemoScreen = () => {
 
   useEffect(()=> {
     const getAllDB = async() => {
+
       const items = await dbManger.getAllItem(tableName);
       setMemos(items || []);
-    }
+    };
 
     const DropDB = async(tableName) => {
       await dbManger.dropTable(tableName);
-    }
+    };
 
     getAllDB();
 
     return () => {
       // DropDB(tableName);
-    }
-
+    };
   }, []);
+
+  useEffect(() => {
+    const MakeMark = () => {
+      const dateTotalMemos = {};
+      const dateDoneMemos = {};
+
+      memos.forEach((item) => {
+        if (item.targetDate in dateTotalMemos) {
+          dateTotalMemos[item.targetDate]++;
+          
+        } else {
+          dateTotalMemos[item.targetDate] = 1;
+          dateDoneMemos[item.targetDate] = 0;
+        };
+
+        if (item.complete === 1){
+          dateDoneMemos[item.targetDate]++;
+        };  
+      });
+
+      const markDatesInfo = {};
+
+      Object.keys(dateTotalMemos).map((item, index) => {
+        let dotColor = '#FFA500';
+
+        if (dateTotalMemos[item] === dateDoneMemos[item]) {
+          dotColor = '#32CD32';
+        
+        } else if (dateDoneMemos[item] === 0){
+          dotColor = '#FF4C4C';
+        };
+
+        markDatesInfo[item] = {dots: [{key: index, color: dotColor}]};
+      });
+
+      setMemoMark(markDatesInfo);
+    }
+    MakeMark();
+
+  }, [memos]);
 
   const OnDayPress = (day) => {
     setSelectedDay(day.dateString);
@@ -121,8 +162,14 @@ const MemoScreen = () => {
         <Calendar
           locale='ko'
           onDayPress={OnDayPress}
+          markingType='multi-dot'
           markedDates={{
-            [selectedDay]: {selected : true, selectedColor: 'red', selectedTextColor: 'white'}
+            ...memoMark, 
+            [selectedDay]: {
+            ...memoMark[selectedDay],
+            selected: true,
+            selectedColor: 'transparent',
+            selectedTextColor: '#9146FF',} 
           }}
           theme={{calendarBackground: 'black', dayTextColor: 'white', 
             monthTextColor: 'white', arrowColor: 'white'}}

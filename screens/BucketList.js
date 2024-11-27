@@ -8,13 +8,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const BucketList = () => {
-	const [buckets, setBuckets] = useState([
-		{"id": 1, 'content': "칼바람 10판 하기", "do": 1, 'status': 0},
-		{"id": 2, 'content': "버킷리스트 만들기", "do": 1, 'status': 0},
-		{"id": 3, 'content': "바람의나라 하기", "do": 1, 'status': 0},
-		{"id": 4, 'content': "트랙 패드 사기", "do": 0, 'status': 0},
-		{"id": 5, 'content': "옷 구경하기", "do": 0, 'status': 0},
-	]);
+	const [buckets, setBuckets] = useState([]);
 
 	const [selected, setSelected] = useState(1);
 	const [bucketText, setBucketText] = useState("");
@@ -33,7 +27,6 @@ const BucketList = () => {
 
 		const getAllBucekts = async() => {
 			const allItem = await dbManger.getAllItem(tableName);
-			console.log(allItem)
 			setBuckets(allItem);
 		}
 
@@ -65,7 +58,7 @@ const BucketList = () => {
 	const EditContent = async(tableName, column, newValue, contentId) => {
     try {
       const result = await dbManger.updateItem(tableName, column, newValue, contentId);
-      const editResult = await dbManger.getAllItem(tableName, 'id', result);
+      const editResult = await dbManger.getItem(tableName, 'id', result);
 
       setBuckets(prevBuckets => {
         return prevBuckets.map(bucket => (bucket.id === result ? editResult[0] : bucket));
