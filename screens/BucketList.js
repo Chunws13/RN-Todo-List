@@ -27,7 +27,7 @@ const BucketList = () => {
 
 		const getAllBucekts = async() => {
 			const allItem = await dbManger.getAllItem(tableName);
-			setBuckets(allItem);
+			setBuckets(allItem || []);
 		}
 
 		createDB();
@@ -64,9 +64,12 @@ const BucketList = () => {
         return prevBuckets.map(bucket => (bucket.id === result ? editResult[0] : bucket));
       });
 
-
     } catch(error) {
-      console.log(error);
+      Alert.alert(
+				'에러가 발생했습니다.',
+				error,
+				[{text: '확인'}]
+			);
     }
   };
 

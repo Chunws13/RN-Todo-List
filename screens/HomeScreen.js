@@ -36,7 +36,7 @@ const HomeSreen = () => {
 
         const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
 
-        const allMemos = await dbManger.getItemByMonth('memos', 'targetDate', yearMonth);
+        const allMemos = await dbManger.getItemByMonth('memos', 'targetDate', yearMonth) || [];
         let done = 0;
         let total = 0;
         
@@ -62,7 +62,7 @@ const HomeSreen = () => {
       }
 
       const initBuckets = async() => {
-        const allBuckets = await dbManger.getAllItem('bucketList');
+        const allBuckets = await dbManger.getAllItem('bucketList') || [];
   
         let tempBucketDo = 0;
         let tempBucketDoComplete = 0;
@@ -94,7 +94,6 @@ const HomeSreen = () => {
 
     }, [])
   );
-
 
   return (
       <View style={styles.container}>
