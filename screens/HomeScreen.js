@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import dbManger from '../utils/DbManger';
