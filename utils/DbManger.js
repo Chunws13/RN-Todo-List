@@ -91,6 +91,28 @@ class DbManger {
       throw(error);
     }
   }
+
+  async getItemByMonth(tableName, column, condition) {
+    try {
+      return new Promise((resolve, reject) => {
+        this.db.transaction(tx => {
+          tx.executeSql(
+            `SELECT * FROM ${tableName} WHERE ${column} LIKE ?`,
+            [`%${condition}%`],
+            (_, { rows }) => {
+              resolve(rows._array);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          )
+        })
+      })
+
+    } catch(error) {
+      throw(error);
+    }
+  };
   
   async updateItem(tableName, column, value, id) {    
     try {

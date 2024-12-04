@@ -1,17 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect, memo} from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, SafeAreaView,
   Alert, TouchableOpacity } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import dbManger from '../utils/DbManger';
 
 import ModalView from '../components/Modal';
 import ListContainer from '../components/ListContainer';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import LocaleKr from '../utils/LocaleKr';
+
+LocaleConfig.locales['kr'] = LocaleKr;
+LocaleConfig.defaultLocale = 'kr';
 
 const MemoScreen = () => {
+  
   const today = new Date();
   const todayString = today.toISOString().split('T')[0];
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const [getMonth, setGetMonth] = useState(`${year}-${month.toString().padStart(2, '0')}`)
+
   const [selectedDay, setSelectedDay] = useState(todayString);
   
   const [memos, setMemos] = useState([]);
@@ -37,22 +46,14 @@ const MemoScreen = () => {
   }, [])
 
   useEffect(()=> {
-    const getAllDB = async() => {
-
-      const items = await dbManger.getAllItem(tableName);
+    const getMonthDB = async() => {
+      
+      const items = await dbManger.getItemByMonth(tableName, 'targetDate', getMonth);
       setMemos(items || []);
     };
 
-    const DropDB = async(tableName) => {
-      await dbManger.dropTable(tableName);
-    };
-
-    getAllDB();
-
-    return () => {
-      // DropDB(tableName);
-    };
-  }, []);
+    getMonthDB();
+  }, [getMonth]);
 
   useEffect(() => {
     const MakeMark = () => {
@@ -104,14 +105,22 @@ const MemoScreen = () => {
 
   const CreateMemo = async() => {
     if (text.replaceAll(' ', '').length > 0){
-      const newMemo = {targetDate: selectedDay, memo: text, complete: 0}
-      const result = await dbManger.insertItem(tableName, newMemo);
-      const newResult = await dbManger.getItem(tableName, 'id', result);
-      
-      setMemos(prevmemos => [...prevmemos, ...newResult]);
-      
-      setText('');
-      setModalVisible(false);
+      try{
+        const newMemo = {targetDate: selectedDay, memo: text, complete: 0}
+        const result = await dbManger.insertItem(tableName, newMemo);
+        const newResult = await dbManger.getItem(tableName, 'id', result);
+        
+        setMemos(prevmemos => [...prevmemos, ...newResult]);
+        
+        setText('');
+        setModalVisible(false);
+      } catch(error) {
+        Alert.alert(
+          '에러가 발생했습니다.',
+          error,
+          [{text: '확인'}]
+        );
+      }
 
     } else {
       Alert.alert(
@@ -132,14 +141,18 @@ const MemoScreen = () => {
       })
   
     } catch(error) {
-      console.log(error);
+      Alert.alert(
+        '에러가 발생했습니다.',
+        error,
+        [{text: '확인'}]
+      );
     }
   };
 
   const CancelMemoEdit = () => {
     setText('');
     setModalVisible(false);
-  }
+  };
 
   const DeleteMemo = (id, memo) => {
     Alert.alert(
@@ -155,6 +168,11 @@ const MemoScreen = () => {
     );
   };
 
+  const ChangeMonth = (month) => {
+    setGetMonth(`${month.year}-${month.month}`);
+    setSelectedDay(month.dateString);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light"/>
@@ -162,14 +180,16 @@ const MemoScreen = () => {
         <Calendar
           locale='ko'
           onDayPress={OnDayPress}
+          onMonthChange={ChangeMonth}
           markingType='multi-dot'
           markedDates={{
             ...memoMark, 
             [selectedDay]: {
-            ...memoMark[selectedDay],
-            selected: true,
-            selectedColor: 'transparent',
-            selectedTextColor: '#9146FF',} 
+              ...memoMark[selectedDay],
+              selected: true,
+              selectedColor: 'transparent',
+              selectedTextColor: '#9146FF',
+            } 
           }}
           theme={{calendarBackground: 'black', dayTextColor: 'white', 
             monthTextColor: 'white', arrowColor: 'white'}}
@@ -196,7 +216,6 @@ const MemoScreen = () => {
       <ModalView visible={modalVisible} selectedDay={selectedDay}
         text={text} textChange={TextEdit}
         onCancel={CancelMemoEdit} onCreate={CreateMemo}/>
-      
 
     </SafeAreaView>
   );

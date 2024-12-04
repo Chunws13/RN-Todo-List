@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import React, { useCallback, useState, useRef } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import dbManger from '../utils/DbManger';
 import ProgressStatus from '../utils/ProgressStatus';
@@ -12,10 +12,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 const HomeSreen = () => {
   // TestdaysData
   const [daysData, setDaysData] = useState({});
-  const [percentColor, setPercentColor] = useState('#FF4C4C');
   
   const maxHeight = Math.max(...Object.values(daysData), 1);
-  
   const wiseSayingLength = WiseSaying.length;
   const randomNumber = Math.floor(Math.random() * wiseSayingLength);
 
@@ -25,11 +23,20 @@ const HomeSreen = () => {
   const [bucketDoComplete, setBucketDoComplete] = useState(0);
   const [bucketBuy, setBucketBuy] = useState(0);
   const [bucketBuyComplete, setBucketBuyComplete] = useState(0);
+
+  const getToday = new Date();
+  const getMonth = getToday.getMonth() + 1;
   
   useFocusEffect(
     useCallback(() => {
       const initMemos = async() =>{
-        const allMemos = await dbManger.getAllItem('memos');
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+
+        const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
+
+        const allMemos = await dbManger.getItemByMonth('memos', 'targetDate', yearMonth);
         let done = 0;
         let total = 0;
         
@@ -48,7 +55,7 @@ const HomeSreen = () => {
         });
         
         const memoPercent = Math.round((done / total) * 100);
-        const memoProgress = Math.floor(memoPercent / 5 ) * 5;
+        const memoProgress = Math.floor(memoPercent / 5 ) * 5 || 0;
 
         setMemoStatus(memoProgress);
         setDaysData(tempDaysData);
@@ -101,17 +108,17 @@ const HomeSreen = () => {
 
             <View style={{flex: 1, justifyContent: 'center', flexDirection: 'row', alignItems: 'center'}}>
               <AntDesign name="aliwangwang-o1" size={50} color="#9146FF" />
-              <Text style={{...styles.text, marginLeft: 20}}> - {WiseSaying[randomNumber].author} - </Text>
+              <Text style={{...styles.text, marginLeft: 20, fontSize: 16}}> - {WiseSaying[randomNumber].author} - </Text>
             </View>
         </View>
 
         <View style={styles.progress}>
           <View style={styles.progress}>
-            <Text style={{...styles.text, fontSize: 18}}> 메모 실천 지수 </Text>
+            <Text style={{...styles.text, fontSize: 18}}> {getMonth}월 메모 실천 지수 </Text>
           </View>
           <View style={styles.progress}>
             <Text style={{...styles.text, fontSize: 58, fontWeight: 800, 
-              color: percentColor}}>
+              color: ChangeColor(memoStatus)}}>
               {memoStatus}% 
             </Text>
           </View>
