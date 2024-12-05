@@ -14,23 +14,13 @@ const BucketList = () => {
 	const [bucketText, setBucketText] = useState("");
 
 	const tableName = 'bucketList';
-	const columns = [
-		{name: 'content', type: 'TEXT'},
-		{name: 'do', type: 'INTEGER'},
-		{name: 'status', type: 'INTEGER'},
-	]
-
+	
 	useEffect(() => {
-		const createDB = async() => {
-			await dbManger.createTable(tableName, columns);
-		};
-
 		const getAllBucekts = async() => {
 			const allItem = await dbManger.getAllItem(tableName);
 			setBuckets(allItem || []);
-		}
-
-		createDB();
+		};
+		
 		getAllBucekts();
 
 	}, [])

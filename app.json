@@ -18,10 +18,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.whattodo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [  
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6996695943383445~3598359499"
+        }
+      ]  
+    ]
   }
 }

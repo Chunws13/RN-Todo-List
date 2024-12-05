@@ -30,21 +30,7 @@ const MemoScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   
   const tableName = 'memos';
-
-  const columns = [
-    {name: 'targetDate', type: 'TEXT'}, 
-    {name: 'memo', type: 'TEXT'}, 
-    {name: 'complete', type: 'INTEGER'}
-  ]
   
-  useEffect(() => {
-    const createDB = async(tableName, columns) => {
-      await dbManger.createTable(tableName, columns);
-    }
-
-    createDB(tableName, columns);
-  }, [])
-
   useEffect(()=> {
     const getMonthDB = async() => {
       
