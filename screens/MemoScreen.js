@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, SafeAreaView,
+import { StyleSheet, View, ScrollView,
   Alert, TouchableOpacity } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import dbManger from '../utils/DbManger';
@@ -160,8 +159,7 @@ const MemoScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light"/>
+    <View style={styles.container}>
       <View style={styles.calendar}>
         <Calendar
           locale='ko'
@@ -203,7 +201,7 @@ const MemoScreen = () => {
         text={text} textChange={TextEdit}
         onCancel={CancelMemoEdit} onCreate={CreateMemo}/>
 
-    </SafeAreaView>
+    </View>
   );
 }
 

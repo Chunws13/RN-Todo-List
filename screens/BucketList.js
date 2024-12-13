@@ -82,7 +82,7 @@ const BucketList = () => {
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<View style={styles.container}>
 			<View style={styles.titleArea}>
 				<Text style={styles.titleText}> Bucket List </Text>
 			</View>
@@ -128,7 +128,7 @@ const BucketList = () => {
 				</ScrollView>
 			</View>
 			
-		</SafeAreaView>
+		</View>
 	)
 }
 
