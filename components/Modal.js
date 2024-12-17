@@ -18,11 +18,11 @@ const ModalView = ({
           <View style={styles.btnArea}>
           
             <TouchableOpacity style={styles.btn} onPress={onCancel}>
-              <Text style={{color: 'red'}}> 취소 </Text>
+              <Text style={{color: 'red', fontWeight: 'bold'}}> 취소 </Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.btn} onPress={onCreate}>
-              <Text style={{color: 'green'}}> 등록 </Text>
+              <Text style={{color: 'green', fontWeight: 'bold'}}> 등록 </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 
   textTitle : {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 
   btnArea: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5
+    padding: 5,
   }
 });
 
