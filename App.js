@@ -3,9 +3,12 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "./navigation/TabNavigator";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import * as SplashScreen from 'expo-splash-screen';
 import AdSetting from "./utils/AdSetting";
 import dbManger from "./utils/DbManger";
+
+SplashScreen.preventAutoHideAsync();
 
 const App = () => {
   const bucketColumns = [
@@ -31,6 +34,8 @@ const App = () => {
 
     createBucketeDB();
     createMemoDB();
+    
+    SplashScreen.hideAsync();
   });
   const adId = AdSetting();
   return (

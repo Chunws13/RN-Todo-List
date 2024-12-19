@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Daily Dot",
-    "slug": "Daily Dot",
+    "name": "데일리 닷",
+    "slug": "데일리 닷",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/daily_dot_icon_512.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/daily_dot_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -28,7 +28,8 @@
       [  
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-6996695943383445~3598359499"
+          "androidAppId": "ca-app-pub-6996695943383445~3598359499",
+          "iosAppId": "ca-app-pub-6996695943383445~9306632114"
         }
       ]  
     ]
