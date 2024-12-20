@@ -43,13 +43,13 @@ const App = () => {
       <StatusBar style="black" translucent={false} />
       <NavigationContainer>
         <TabNavigator/>
-        <BannerAd
+        {/* <BannerAd
           unitId={adId}
           size = {BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
           }}
-        />
+        /> */}
       </NavigationContainer>
     </SafeAreaProvider>
   )

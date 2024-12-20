@@ -15,7 +15,6 @@ const CircleGraph = ({ total, done, title}) => {
 
       // Update bar color based on progress
       setBarColor(ChangeColor(updatedProgressValue));
-
     }, [done, total]) // Dependencies: Re-run when `done` or `total` changes
   );
 
@@ -33,7 +32,7 @@ const CircleGraph = ({ total, done, title}) => {
       {(fil) => (
         <View style={{justifyContent: 'center', 
           alignItems: 'center', transform: [{ rotate: '90deg' }]}}>
-
+            
           <Text style={{color:'white', fontSize: 16}}>
             {title}
           </Text>

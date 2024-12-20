@@ -116,7 +116,7 @@ const HomeSreen = () => {
             <Text style={{...styles.text, fontSize: 18}}> {getMonth}월 메모 실천 지수 </Text>
           </View>
           <View style={styles.progress}>
-            <Text style={{...styles.text, fontSize: 58, fontWeight: 800, 
+            <Text style={{...styles.text, fontSize: 48, fontWeight: 800, 
               color: ChangeColor(memoStatus)}}>
               {memoStatus}% 
             </Text>

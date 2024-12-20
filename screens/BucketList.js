@@ -127,7 +127,6 @@ const BucketList = () => {
 					))}
 				</ScrollView>
 			</View>
-			
 		</View>
 	)
 }
