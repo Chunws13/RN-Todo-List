@@ -180,7 +180,7 @@ const MemoScreen = () => {
         />
       </View>
       
-      <View style={styles.memosArea}>
+      <View style={styles.memosArea} accessible={true} accessibilityLabel='memoContainer'>
         <ScrollView>
           {memos.map((item, index) => {
             return item.targetDate === selectedDay ? 

@@ -113,7 +113,9 @@ const BucketList = () => {
 			</View>
 			<View>
 				<TextInput style={styles.inputField} onSubmitEditing={AddContent}
-					value={bucketText} onChangeText={EidtBucket}/>
+					value={bucketText} onChangeText={EidtBucket}
+					accessibilityLabel="BucketListInput"
+					accessible={true}/>
 			</View>
 
 			<View style={styles.scrollContainer}>

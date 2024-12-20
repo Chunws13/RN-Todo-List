@@ -13,7 +13,8 @@ const ModalView = ({
       <View style={styles.modalCover}>
         <View style={styles.modalContainer}>
           <Text style={styles.textTitle}> {selectedDay} </Text>
-          <TextInput style={styles.textArea} 
+          <TextInput style={styles.textArea}
+            accessible={true} accessibilityLabel="memoInput"
             editable={true} value={text} onChangeText={textChange}/>
           <View style={styles.btnArea}>
           
