@@ -2,7 +2,7 @@
   "expo": {
     "name": "데일리 닷",
     "slug": "데일리 닷",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/daily_dot_icon_512.png",
     "userInterfaceStyle": "light",

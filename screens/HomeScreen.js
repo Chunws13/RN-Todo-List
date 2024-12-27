@@ -99,7 +99,7 @@ const HomeSreen = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           
-            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
               <Text style={{...styles.text, fontSize: 16}}> 
                 " {WiseSaying[randomNumber].description} "
               </Text>
@@ -116,7 +116,7 @@ const HomeSreen = () => {
             <Text style={{...styles.text, fontSize: 18}}> {getMonth}월 메모 실천 지수 </Text>
           </View>
           <View style={styles.progress}>
-            <Text style={{...styles.text, fontSize: 48, fontWeight: 800, 
+            <Text style={{...styles.text, fontSize: 36, fontWeight: 800, 
               color: ChangeColor(memoStatus)}}>
               {memoStatus}% 
             </Text>
@@ -139,14 +139,14 @@ const HomeSreen = () => {
         </View>
 
         <View style={{flex: 1}}>
-          <Text style={{...styles.text, textAlign: 'left', marginLeft: 20}}> 
-            요일 별 실행 횟수
+          <Text style={{...styles.text, flex: 1, textAlign: 'left', marginLeft: 20}}> 
+            요일 별 메모 완료
           </Text>
 
           <View style={styles.dayAnalysis}>
             { Object.keys(daysData).map((item, index) => (
                 <View key={index} style={styles.chartArea}>
-                  <View style={{flex: 9}}>
+                  <View style={{flex: 6}}>
                     <View style={{flex: (1- daysData[item] / maxHeight), backgroundColor: 'transparent'}}/>
 
                     <Text style={{...styles.text, marginBottom: 3}}> 
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
 
   dayAnalysis: {
-    flex: 1,
+    flex: 9,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,

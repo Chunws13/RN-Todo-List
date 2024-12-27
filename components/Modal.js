@@ -1,5 +1,5 @@
 import { Modal, View, Text, StyleSheet,
-  TextInput, TouchableOpacity } from "react-native";
+  TextInput, TouchableOpacity, KeyboardAvoidingView,ScrollView } from "react-native";
 
 const ModalView = ({
   visible, selectedDay, text, textChange,
@@ -10,7 +10,7 @@ const ModalView = ({
       visible={visible}
       transparent={true}
       >
-      <View style={styles.modalCover}>
+      <KeyboardAvoidingView style={styles.modalCover} behavior="padding">
         <View style={styles.modalContainer}>
           <Text style={styles.textTitle}> {selectedDay} </Text>
           <TextInput style={styles.textArea}
@@ -27,7 +27,7 @@ const ModalView = ({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       
     </Modal>
   );
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '20%',
+    height: 150,
     width: '80%',
     backgroundColor: 'white',
     borderRadius: 20,

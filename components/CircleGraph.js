@@ -20,7 +20,7 @@ const CircleGraph = ({ total, done, title}) => {
 
   return (
     <AnimatedCircularProgress
-      size={160}
+      size={120}
       width={15}
       fill={progressValue}
       tintColor={barColor}

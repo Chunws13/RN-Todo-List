@@ -217,11 +217,10 @@ const styles = StyleSheet.create({
     flex: 2,
     width: '100%',
     justifyContent: 'center',
-    
   },
 
   memosArea: {
-    flex: 3,
+    flex: 2,
     width: '100%',
     paddingVertical: 10,
     marginTop: 20,
